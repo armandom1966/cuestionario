@@ -452,7 +452,7 @@ main { max-width:780px; margin:0 auto; padding:28px 16px 60px; }
    CONFIGURACIÓN  ← ÚNICO LUGAR QUE DEBES EDITAR
    Pega aquí la URL de tu Google Apps Script Web App
 ───────────────────────────────────────────────────── */
-const SHEETS_URL = "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbz3UbYrpOMh1fXlaSICEe4922CldYrCDSpw-clqJzazPLyySYG081IKMOF-Lx_27Imfww/exec";
 
 /* ─────────────────────────────────────────────────────
    ESCALA DE PUNTAJE SABER 11
@@ -713,7 +713,7 @@ function getNivel(p) {
 async function sendToSheets(data) {
   const st = document.getElementById('send-status');
 
-  if (!SHEETS_URL || SHEETS_URL === 'PEGA_AQUI_TU_URL_DE_APPS_SCRIPT') {
+  if (!SHEETS_URL || SHEETS_URL === 'https://script.google.com/macros/s/AKfycbz3UbYrpOMh1fXlaSICEe4922CldYrCDSpw-clqJzazPLyySYG081IKMOF-Lx_27Imfww/exec') {
     st.className = 'send-status fail';
     st.textContent = '⚠️ Aún no se ha configurado la URL de Google Sheets. Consulta las instrucciones del docente.';
     return;
