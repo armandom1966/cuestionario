@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prueba Saber 11° – Sociales y Ciudadanas</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   VARIABLES Y RESET
+══════════════════════════════════════ */
+:root {
+  --col:   #E8500A;
+  --col2:  #1A1A2E;
+  --col3:  #F5F0E8;
+  --ok:    #2E7D32;
+  --err:   #C62828;
+  --card:  #FFFFFF;
+  --sh:    0 4px 24px rgba(0,0,0,.10);
+  --r:     12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--col3);
+  color: var(--col2);
+  min-height: 100vh;
+}
+
+/* ── CABECERA ── */
+header {
+  background: var(--col2);
+  color: #fff;
+  padding: 24px 20px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content:''; position:absolute; top:-50px; right:-50px;
+  width:200px; height:200px; border-radius:50%;
+  background:rgba(232,80,10,.18);
+}
+header::after {
+  content:''; position:absolute; bottom:-30px; left:-30px;
+  width:120px; height:120px; border-radius:50%;
+  background:rgba(232,80,10,.10);
+}
+header h1 {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.3rem,4vw,1.9rem);
+  position:relative; z-index:1;
+}
+header p { font-size:.88rem; opacity:.7; margin-top:4px; position:relative; z-index:1; }
+.badge {
+  display:inline-block; background:var(--col); color:#fff;
+  font-size:.72rem; font-weight:700; padding:3px 12px;
+  border-radius:20px; margin-bottom:8px; letter-spacing:1px;
+  text-transform:uppercase; position:relative; z-index:1;
+}
+
+/* ── BARRA DE PROGRESO ── */
+#prog-wrap { background:#ddd; height:5px; }
+#prog-bar  { height:5px; background:var(--col); width:0; transition:width .4s; }
+
+/* ── CONTENIDO ── */
+main { max-width:780px; margin:0 auto; padding:28px 16px 60px; }
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* ══════════════════════════════════════
+   PANTALLA 0 – REGISTRO
+══════════════════════════════════════ */
+#screen-reg { text-align:center; }
+#screen-reg h2 {
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem; margin-bottom:8px;
+}
+#screen-reg p { color:#666; margin-bottom:28px; line-height:1.6; }
+
+.form-card {
+  background:var(--card); border-radius:var(--r);
+  box-shadow:var(--sh); padding:32px 28px;
+  max-width:500px; margin:0 auto 24px; text-align:left;
+}
+.form-card h3 {
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem; margin-bottom:20px; color:var(--col2);
+  padding-bottom:10px; border-bottom:2px solid var(--col3);
+}
+.field { margin-bottom:18px; }
+.field label {
+  display:block; font-size:.85rem; font-weight:600;
+  color:#555; margin-bottom:6px; letter-spacing:.3px;
+}
+.field label span { color:var(--col); }
+.field input, .field select {
+  width:100%; padding:12px 14px;
+  border:2px solid #E0DDD7; border-radius:8px;
+  font-family:'Source Sans 3',sans-serif;
+  font-size:.95rem; color:var(--col2);
+  background:#fff; transition:border-color .2s;
+  outline:none;
+}
+.field input:focus, .field select:focus { border-color:var(--col); }
+.field input.invalid { border-color:var(--err); background:#fff8f8; }
+.field .err-msg {
+  font-size:.78rem; color:var(--err);
+  margin-top:4px; display:none;
+}
+.field.has-error .err-msg { display:block; }
+
+.info-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:12px; margin-bottom:28px;
+}
+.info-card {
+  background:var(--card); border-radius:var(--r);
+  padding:16px 10px; box-shadow:var(--sh); text-align:center;
+}
+.info-card .num { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--col); }
+.info-card .lbl { font-size:.78rem; color:#888; margin-top:2px; }
+
+/* ══════════════════════════════════════
+   PANTALLA 1 – PREGUNTA
+══════════════════════════════════════ */
+.q-card {
+  background:var(--card); border-radius:var(--r);
+  box-shadow:var(--sh); padding:28px 24px;
+  margin-bottom:20px; animation:fadeUp .3s ease;
+}
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(14px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+.q-meta {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;
+}
+.q-num {
+  background:var(--col); color:#fff;
+  font-weight:700; font-size:.78rem;
+  padding:4px 12px; border-radius:20px;
+}
+.q-counter { font-size:.8rem; color:#999; }
+.q-context {
+  background:#f7f3ec; border-left:3px solid var(--col);
+  padding:10px 14px; font-size:.87rem; color:#555;
+  margin-bottom:14px; border-radius:0 6px 6px 0; line-height:1.6;
+  white-space:pre-wrap;
+}
+.q-text { font-size:.96rem; line-height:1.65; color:#333; white-space:pre-wrap; }
+.options { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+.opt {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:12px 15px; border:2px solid #E0DDD7;
+  border-radius:10px; cursor:pointer; background:#fff;
+  font-size:.93rem; line-height:1.5;
+  transition:border-color .2s, background .2s, transform .15s;
+}
+.opt:hover:not(.disabled) { border-color:var(--col); background:#FFF5EF; transform:translateX(3px); }
+.opt.correct   { border-color:var(--ok);  background:#E8F5E9; }
+.opt.incorrect { border-color:var(--err); background:#FFEBEE; }
+.opt.disabled  { cursor:default; }
+.opt-letter {
+  min-width:28px; height:28px; border-radius:50%;
+  background:#eee; display:flex; align-items:center;
+  justify-content:center; font-weight:700; font-size:.8rem;
+  flex-shrink:0; transition:background .2s, color .2s;
+}
+.opt.correct   .opt-letter { background:var(--ok);  color:#fff; }
+.opt.incorrect .opt-letter { background:var(--err); color:#fff; }
+.feedback-box {
+  margin-top:14px; padding:11px 15px; border-radius:9px;
+  font-size:.89rem; line-height:1.55; display:none;
+}
+.feedback-box.ok  { background:#E8F5E9; border:1px solid #A5D6A7; color:#1B5E20; }
+.feedback-box.err { background:#FFEBEE; border:1px solid #EF9A9A; color:#B71C1C; }
+.nav-row {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-top:20px;
+  flex-wrap:wrap; gap:12px;
+}
+
+/* ══════════════════════════════════════
+   PANTALLA 2 – RESULTADO
+══════════════════════════════════════ */
+#screen-result { text-align:center; }
+
+/* Tarjeta de identificación del estudiante */
+.id-banner {
+  background:var(--col2); color:#fff;
+  border-radius:var(--r); padding:18px 24px;
+  margin-bottom:20px; text-align:left;
+  display:flex; justify-content:space-between;
+  align-items:center; flex-wrap:wrap; gap:12px;
+}
+.id-banner .id-name { font-family:'Playfair Display',serif; font-size:1.2rem; }
+.id-banner .id-meta { font-size:.85rem; opacity:.75; }
+.id-banner .id-date { font-size:.82rem; opacity:.6; text-align:right; }
+
+/* Puntaje principal – estilo Saber 11 */
+.score-block {
+  background:var(--card); border-radius:var(--r);
+  box-shadow:var(--sh); padding:28px 20px;
+  margin-bottom:20px;
+}
+.score-label {
+  font-size:.82rem; letter-spacing:1.5px; text-transform:uppercase;
+  color:#999; margin-bottom:6px;
+}
+.score-main {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3rem,10vw,5rem);
+  font-weight:700; color:var(--col);
+  line-height:1;
+}
+.score-sub { font-size:.9rem; color:#888; margin-top:4px; }
+.score-bar-wrap {
+  background:#eee; border-radius:20px; height:12px;
+  margin:16px auto; max-width:400px; overflow:hidden;
+}
+.score-bar {
+  height:12px; border-radius:20px;
+  background:linear-gradient(90deg,#E8500A,#c0392b);
+  width:0; transition:width 1.2s cubic-bezier(.22,1,.36,1);
+}
+.score-range {
+  display:flex; justify-content:space-between;
+  max-width:400px; margin:0 auto; font-size:.75rem; color:#bbb;
+}
+
+/* Métricas */
+.stats-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:12px; margin-bottom:20px;
+}
+.stat-box {
+  background:var(--card); border-radius:var(--r);
+  padding:16px 8px; box-shadow:var(--sh);
+}
+.stat-box .val {
+  font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700;
+}
+.stat-box .val.g { color:var(--ok); }
+.stat-box .val.r { color:var(--err); }
+.stat-box .val.b { color:#1565C0; }
+.stat-box .lbl { font-size:.78rem; color:#777; }
+
+/* Nivel de desempeño */
+.nivel-card {
+  border-radius:var(--r); padding:16px 20px;
+  margin-bottom:20px; text-align:left;
+  display:flex; align-items:center; gap:16px;
+}
+.nivel-card .nivel-icon {
+  font-size:2.2rem; flex-shrink:0;
+  line-height:1;
+}
+.nivel-card h4 { font-size:.8rem; text-transform:uppercase; letter-spacing:1px; opacity:.7; }
+.nivel-card p  { font-size:.95rem; margin-top:2px; line-height:1.5; }
+
+/* Estados de envío */
+.send-status {
+  padding:12px 16px; border-radius:9px;
+  font-size:.9rem; margin-bottom:20px; display:none;
+}
+.send-status.sending { background:#E3F2FD; border:1px solid #90CAF9; color:#0D47A1; display:block; }
+.send-status.sent    { background:#E8F5E9; border:1px solid #A5D6A7; color:#1B5E20; display:block; }
+.send-status.fail    { background:#FFEBEE; border:1px solid #EF9A9A; color:#B71C1C; display:block; }
+
+/* Revisión */
+.review-item {
+  background:var(--card); border-radius:var(--r);
+  padding:16px 18px; margin-bottom:12px;
+  box-shadow:var(--sh); border-left:5px solid; text-align:left;
+}
+.review-item.ok-r  { border-color:var(--ok);  }
+.review-item.err-r { border-color:var(--err); }
+.review-badge {
+  display:inline-block; padding:2px 10px; border-radius:12px;
+  font-size:.74rem; font-weight:700; margin-bottom:6px;
+}
+.review-badge.ok-b  { background:#E8F5E9; color:var(--ok); }
+.review-badge.err-b { background:#FFEBEE; color:var(--err); }
+
+/* ── BOTONES ── */
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 26px; border-radius:10px;
+  font-family:'Source Sans 3',sans-serif;
+  font-weight:600; font-size:.94rem; border:none;
+  cursor:pointer; transition:transform .15s, box-shadow .15s;
+}
+.btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.15); }
+.btn-primary   { background:var(--col);  color:#fff; }
+.btn-secondary { background:var(--col2); color:#fff; }
+.btn-outline   { background:transparent; color:var(--col2); border:2px solid var(--col2); }
+
+/* Score live */
+#score-live { font-size:.83rem; color:#888; }
+
+/* Responsive */
+@media(max-width:500px){
+  .q-card { padding:18px 14px; }
+  .form-card { padding:22px 18px; }
+  .btn { padding:11px 18px; font-size:.88rem; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .id-banner { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">ICFES · 2021</div>
+  <h1>Prueba Sociales y Ciudadanas</h1>
+  <p>Saber 11° · Simulacro oficial</p>
+</header>
+<div id="prog-wrap"><div id="prog-bar"></div></div>
+
+<main>
+
+<!-- ══════════════════════════════
+     PANTALLA 0 – REGISTRO
+══════════════════════════════ -->
+<div id="screen-reg" class="screen active">
+  <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:8px;">Registro del estudiante</h2>
+  <p style="color:#666;margin-bottom:24px;">Completa tus datos antes de comenzar. Al finalizar, tu puntaje quedará registrado automáticamente.</p>
+
+  <div class="info-grid">
+    <div class="info-card"><div class="num">48</div><div class="lbl">Preguntas</div></div>
+    <div class="info-card"><div class="num">0–100</div><div class="lbl">Escala Saber 11</div></div>
+    <div class="info-card"><div class="num">✓</div><div class="lbl">Retroalimentación inmediata</div></div>
+  </div>
+
+  <div class="form-card">
+    <h3>📋 Datos del estudiante</h3>
+
+    <div class="field" id="f-inst">
+      <label>Institución Educativa <span>*</span></label>
+      <input type="text" id="inp-inst" placeholder="Ej: Colegio Nacional San José" autocomplete="organization"/>
+      <div class="err-msg">Por favor escribe el nombre de tu institución.</div>
+    </div>
+
+    <div class="field" id="f-name">
+      <label>Nombre completo <span>*</span></label>
+      <input type="text" id="inp-name" placeholder="Apellidos y nombres" autocomplete="name"/>
+      <div class="err-msg">Por favor escribe tu nombre completo.</div>
+    </div>
+
+    <div class="field" id="f-grado">
+      <label>Grado</label>
+      <select id="inp-grado">
+        <option value="">— Selecciona tu grado —</option>
+        <option>10°</option>
+        <option>11°</option>
+        <option>Egresado</option>
+        <option>Otro</option>
+      </select>
+    </div>
+
+    <div style="margin-top:4px;font-size:.8rem;color:#aaa;">
+      La fecha y hora se registran automáticamente.
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="startQuiz()" style="font-size:1rem;padding:14px 36px;">
+    ▶ &nbsp;Iniciar prueba
+  </button>
+</div>
+
+<!-- ══════════════════════════════
+     PANTALLA 1 – PREGUNTA
+══════════════════════════════ -->
+<div id="screen-question" class="screen">
+  <div class="q-card" id="q-card">
+    <div class="q-meta">
+      <span class="q-num" id="q-num-lbl">Pregunta 1</span>
+      <span class="q-counter" id="q-counter">1 / 48</span>
+    </div>
+    <div id="q-context" class="q-context" style="display:none"></div>
+    <div id="q-text"    class="q-text"></div>
+    <div id="q-options" class="options"></div>
+    <div id="feedback-box" class="feedback-box"></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-outline" id="btn-prev" onclick="prevQ()">← Anterior</button>
+    <span id="score-live"></span>
+    <button class="btn btn-primary" id="btn-next" onclick="nextQ()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PANTALLA 2 – RESULTADO
+══════════════════════════════ -->
+<div id="screen-result" class="screen">
+
+  <!-- Identificación -->
+  <div class="id-banner" id="id-banner">
+    <div>
+      <div class="id-name" id="res-name">—</div>
+      <div class="id-meta" id="res-inst">—</div>
+    </div>
+    <div class="id-date" id="res-date">—</div>
+  </div>
+
+  <!-- Puntaje Saber 11 -->
+  <div class="score-block">
+    <div class="score-label">Puntaje Saber 11°</div>
+    <div class="score-main" id="final-score">—</div>
+    <div class="score-sub">Escala 0 – 100 puntos</div>
+    <div class="score-bar-wrap"><div class="score-bar" id="score-bar"></div></div>
+    <div class="score-range"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+  </div>
+
+  <!-- Métricas detalladas -->
+  <div class="stats-grid">
+    <div class="stat-box"><div class="val g" id="r-correct">—</div><div class="lbl">Correctas</div></div>
+    <div class="stat-box"><div class="val r" id="r-wrong">—</div><div class="lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="val b" id="r-pct">—</div><div class="lbl">% Acierto</div></div>
+  </div>
+
+  <!-- Nivel de desempeño -->
+  <div class="nivel-card" id="nivel-card">
+    <div class="nivel-icon" id="nivel-icon">—</div>
+    <div>
+      <h4 id="nivel-label">—</h4>
+      <p id="nivel-msg">—</p>
+    </div>
+  </div>
+
+  <!-- Estado de envío a Sheets -->
+  <div class="send-status" id="send-status"></div>
+
+  <!-- Botones -->
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;">
+    <button class="btn btn-secondary" onclick="toggleReview()">📄 Ver revisión</button>
+    <button class="btn btn-primary"   onclick="restartQuiz()">↺ &nbsp;Nueva prueba</button>
+  </div>
+
+  <div id="review-section" style="display:none;text-align:left;"></div>
+</div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────────────────
+   CONFIGURACIÓN  ← ÚNICO LUGAR QUE DEBES EDITAR
+   Pega aquí la URL de tu Google Apps Script Web App
+───────────────────────────────────────────────────── */
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbz3UbYrpOMh1fXlaSICEe4922CldYrCDSpw-clqJzazPLyySYG081IKMOF-Lx_27Imfww/exec";
+
+/* ─────────────────────────────────────────────────────
+   ESCALA DE PUNTAJE SABER 11
+   El ICFES usa escala 0–100 con puntaje = correctas/total × 100
+   redondeado a dos decimales. El mínimo es 0 y máximo 100.
+───────────────────────────────────────────────────── */
+function calcSaber11(correctas, total) {
+  return Math.round((correctas / total) * 100 * 100) / 100;
+}
+
+/* ─────────────────────────────────────────────────────
+   BASE DE PREGUNTAS (48 preguntas ICFES 2021)
+───────────────────────────────────────────────────── */
+const QS = [
+  { n:1, ctx:"", txt:"Como argumento a favor del vegetarianismo, una persona afirma que consumir carne es nocivo para los humanos porque el animal sufre en el proceso, produciendo energías negativas que se transmiten al consumidor. Otra persona sostiene que el consumo de productos de origen animal es un acto amoral, resultado del abuso del ser humano ante los demás seres vivos.\n\n¿Cuál afirmación sobre la relación entre las opiniones presentadas NO es correcta?", opts:["Son similares, porque ambas van en contra del consumo de carne.","Son complementarias, porque ambas promueven el vegetarianismo argumentando la obligación de proteger a los animales.","Son diferentes, porque la primera aboga por la salud del ser humano y la segunda, por el bienestar de los animales.","Son disímiles, porque la primera se centra en cómo el animal afecta al ser humano y la segunda, en cómo el ser humano afecta al animal."], ans:1 },
+  { n:2, ctx:"", txt:"Los habitantes de un barrio de clase media se oponen a que se construyan viviendas de interés social, argumentando que las personas de escasos recursos representarían un peligro para la seguridad. Señalan que las zonas más pobres son también las más inseguras.\n\n¿Cuál contiene un argumento válido en contra de esas afirmaciones?", opts:["Quienes ejercen la delincuencia en una zona pobre pueden no ser habitantes de esa zona.","Entre los delincuentes nunca hay personas de escasos recursos, pues todos son adinerados gracias a sus actividades delictivas.","Los delincuentes que habitan en zonas pobres dejarían de violar la ley si contaran con mejores condiciones de vida.","Hay casos en que la pobreza y la falta de oportunidades llevan a una persona, en un momento de desesperación, a cometer un delito."], ans:0 },
+  { n:3, ctx:"Un rector argumenta: 'Las personas con inclinaciones homosexuales merecen ser amadas. En todos los países hay población homosexual, y las preferencias sexuales son resultado de una interacción de la biología con el medio ambiente. Yo creo que los homosexuales pueden enseñar, siempre y cuando controlen su comportamiento en clase y no afecten la orientación sexual de los estudiantes'.", txt:"¿Cuál de los siguientes enunciados del rector contiene un prejuicio cuestionable?", opts:["En todos los países hay población homosexual.","Las personas con inclinaciones homosexuales, como todas las personas, merecen ser amadas.","Las preferencias sexuales son el resultado de una compleja interacción de la biología con el medio ambiente.","Los homosexuales pueden enseñar, siempre y cuando controlen su comportamiento en clase y no afecte la orientación sexual de los estudiantes."], ans:3 },
+  { n:4, ctx:"Magnicidios en Colombia siglo XX:\n1. Asesinato de Luis Carlos Galán\n2. Asesinato de Jorge Eliécer Gaitán\n3. Asesinato de Rafael Uribe Uribe\n4. Asesinato de Álvaro Gómez Hurtado", txt:"¿Cuál es el orden cronológico de estos hechos?", opts:["2, 3, 1 y 4.","3, 2, 1 y 4.","3, 1, 2 y 4.","4, 3, 2 y 1."], ans:1 },
+  { n:5, ctx:"En Colombia se debate sobre legalizar el tráfico y consumo de drogas ilícitas. Un sector propone fortalecer la sensibilización sobre riesgos de salud. El otro propone endurecer las penas para productores, expendedores y consumidores que porten más de la dosis legal.", txt:"¿Son similares las dos posiciones frente a la legalización de las drogas?", opts:["No, porque una está a favor de la legalización y la otra a favor del endurecimiento de las sanciones legales.","Sí, porque ambas consideran que la regulación legal del consumo tiene un efecto directo sobre el narcotráfico.","No, porque una plantea que la lucha debe ser por la vía de la represión y la otra por la vía de la prevención del consumo.","Sí, porque ambas están en contra de la legalización y se enfocan en la protección de los consumidores."], ans:2 },
+  { n:6, ctx:"La asamblea de propietarios debate ampliar el horario del salón comunal. Los pisos altos quieren hasta la 1:00 a.m.; los del primer piso (donde está el salón) rechazan más ruido a altas horas. Se vota y se decide ampliar hasta la medianoche.", txt:"¿Esta solución se ajusta a los intereses de todos los vecinos?", opts:["No, porque los habitantes de los pisos más altos no pueden aprovechar las fiestas que se hagan en el salón comunal.","Sí, porque debido a que la propuesta se aprobó todos los vecinos están llamados a tener los mismos intereses.","No, porque el ruido de las fiestas afecta más a los propietarios del primer piso cercanos al salón comunal.","Sí, porque todos los propietarios tuvieron derecho a exponer sus ideas y a votar según sus intereses."], ans:2 },
+  { n:7, ctx:"Conflicto entre una constructora y organizaciones ambientalistas por un proyecto sobre un humedal. Se propone que la constructora modifique sus planos para reducir el impacto sobre el humedal y salvar algunos animales y árboles.", txt:"¿Cómo se ajusta esta solución a los intereses de ambas partes?", opts:["La solución beneficia a ambas partes, pues busca reducir gradualmente el daño ambiental y garantizar el negocio de la constructora.","La solución beneficia solamente a una de las partes en detrimento del medio ambiente y del ecosistema de humedal.","La solución beneficia a los ambientalistas, pues defiende sus intereses, y perjudica el negocio de la constructora.","La solución no beneficia a ninguna de las partes, porque el humedal será destruido y la constructora no podrá realizar su proyecto."], ans:1 },
+  { n:8, ctx:"", txt:"¿Cuál de los siguientes mecanismos puede ser usado para modificar la Constitución Política de Colombia?", opts:["Una consulta popular.","Un plebiscito.","Un referendo.","Un cabildo abierto."], ans:2 },
+  { n:9, ctx:"Un estudio de la ONU plantea tres propuestas para atender la urbanización en América Latina:\n1) Densificar ciudades con vivienda vertical.\n2) Legalizar barrios de invasión dando servicios y títulos de propiedad.\n3) Aumentar la oferta de transporte público.", txt:"¿Qué tipo de relación se puede establecer entre las propuestas de solución?", opts:["Complementariedad, pues todas priorizan el desarrollo económico de los centros urbanos.","Compatibilidad, pues todas se enfocan hacia la recuperación de las zonas de producción rural.","Complementariedad, pues todas se enfocan hacia la mitigación de los costos sociales y económicos de la expansión urbana.","Compatibilidad, pues todas priorizan el mejoramiento de la calidad de vida de los habitantes provenientes de zonas rurales."], ans:2 },
+  { n:10, ctx:"Un presidente de Colombia, dado su alta popularidad, decide proponer la inclusión de la reelección presidencial indefinida en la Constitución convocando un referendo.", txt:"¿El presidente puede hacer esto?", opts:["Sí, porque los referendos permiten reformar la Constitución.","No, porque la Constitución no puede reformarla el Ejecutivo; solo a través de una Asamblea Constituyente.","Sí, porque el presidente puede modificar la Constitución por su cuenta, sin acudir al poder legislativo.","No, porque los referendos no permiten reformar la Constitución."], ans:0 },
+  { n:11, ctx:"Un ciudadano quería promover una reforma a la Ley 100 de 1993. Para ello, presentó una propuesta ante el Congreso a través de una 'iniciativa popular'.", txt:"¿Es legalmente viable el procedimiento realizado por el ciudadano?", opts:["No, porque la Constitución establece que un ciudadano no tiene facultad por sí solo para introducir propuestas de reforma a leyes.","Sí, porque la Constitución establece que se requiere un ciudadano para proponer una iniciativa popular que reforme una ley.","No, porque la Constitución establece que se requiere el 5% del censo electoral para presentar una iniciativa popular que reforme una ley.","Sí, porque la Constitución establece que se requiere el 5% del apoyo de los congresistas para que la iniciativa popular se apruebe."], ans:2 },
+  { n:12, ctx:"El alcalde de un municipio y su abogado compraron predios por $244 millones. Gracias a $4.700 millones de recursos públicos destinados a vías e iluminación, esos predios pasaron a valer más de $12.000 millones. El alcalde luego incluyó esas inversiones en el PBOT, aunque no estaban en el Plan de Desarrollo original.", txt:"¿Cuál afirmación explica las denuncias contra el alcalde?", opts:["Los denunciantes no obtuvieron beneficio de las obras desarrolladas en el PBOT.","Los denunciantes creen que el alcalde no ha hecho obras que beneficien al municipio.","Los denunciantes tienen evidencias para afirmar que el alcalde abusó de su poder.","Los denunciantes no quieren que el alcalde invierta en las zonas rurales del municipio."], ans:2 },
+  { n:13, ctx:"El estado de excepción es una medida temporal en la que el presidente puede: restringir reuniones públicas; ordenar aprehensión preventiva de personas; modificar el presupuesto; aumentar y reducir penas; modificar el procedimiento penal y decretar leyes.", txt:"¿Es posible que durante el estado de excepción se altere la distribución del poder público?", opts:["Sí, porque es imposible modificar el presupuesto del país, ya que los recursos públicos se adjudican previamente.","No, porque la Rama Ejecutiva debe ser la única encargada de restringir las manifestaciones públicas.","Sí, porque la Rama Judicial debe ser la única encargada de ordenar el arresto de personas.","Sí, porque el presidente podría proponer leyes cuando, de manera ordinaria, la Rama Legislativa es la única que puede hacer esto."], ans:3 },
+  { n:14, ctx:"Una rama del poder puede ejercer control político a través de: la citación a un debate de control político y la moción de censura (reprochar actuación de ministros, dando lugar a su separación del cargo).", txt:"¿Cuál de las ramas del poder puede ejercer control político a través de citaciones y mociones de censura?", opts:["La Rama Electoral.","La Rama Ejecutiva.","La Rama Judicial.","La Rama Legislativa."], ans:3 },
+  { n:15, ctx:"Un presidente considera que la delincuencia juvenil ha incrementado por el trato especial en el juzgamiento de menores. Quiere consultar a la ciudadanía si apoyaría anular esa norma constitucional.", txt:"¿Cuál mecanismo de participación directa es el adecuado?", opts:["El plebiscito.","El referendo.","La consulta popular.","El cabildo abierto."], ans:1 },
+  { n:16, ctx:'"Con los jefes liberales que en la tarde de la sublevación y el caos habían ido a visitarlo en Palacio bajo las balas y entre los incendios, el presidente Ospina improvisó nuevamente un gobierno de Unidad Nacional, mientras Laureano Gómez se iba indignado del país. En la Bogotá medio quemada restablecieron el orden las tropas del ejército venidas de Boyacá, pero en provincia los \'nueveabrileños\' empezaron a levantar la autodefensa liberal vaticinada por Gaitán."', txt:"¿Qué periodo de la historia política colombiana se representa en este fragmento?", opts:["La Violencia entre 1948 y 1953.","El Frente Nacional entre 1958 y 1974.","La Patria Boba entre 1810 y 1815.","El gobierno de Rojas Pinilla entre 1954 y 1958."], ans:0 },
+  { n:17, ctx:'"Es posible y conveniente para la nación y para el conservatismo buscar un entendimiento claro y firme con el Partido Liberal... por el cual se haga imposible que el gobierno civil que haya de suceder al de las Fuerzas Armadas se convierta en una hegemonía de partido."', txt:"¿Cuál razón explicaría que este fragmento pertenece al periodo del Frente Nacional?", opts:["El autor propone un acuerdo entre los partidos tradicionales como alternativa política ante la amenaza del fascismo y la dictadura militar.","Da cuenta de la voluntad de paz y conciliación en el periodo de la dictadura de las Fuerzas Armadas encabezadas por Rojas Pinilla.","Da cuenta del acuerdo realizado por los partidos tradicionales como salida a la crisis social producida por la violencia y los sectarismos bipartidistas de los años 1950.","El autor advierte de los peligros inherentes a un modelo democrático electoral polarizado por dos partidos tradicionales, antagónicos y excluyentes."], ans:2 },
+  { n:18, ctx:"Revoluciones: Revolución mexicana, Revolución cubana, Revolución nicaragüense (sandinista) y Revolución rusa.", txt:"¿Cuál es el orden cronológico (del más antiguo al más reciente)?", opts:["Revolución nicaragüense, Revolución rusa, Revolución mexicana, Revolución cubana.","Revolución mexicana, Revolución rusa, Revolución cubana, Revolución nicaragüense.","Revolución rusa, Revolución cubana, Revolución mexicana, Revolución nicaragüense.","Revolución cubana, Revolución rusa, Revolución mexicana, Revolución nicaragüense."], ans:1 },
+  { n:19, ctx:"En la crisis de los años 1990, el gobierno colombiano acordó con el FMI medidas como: reforma del sector público, reducción del gasto, reforma pensional, libre comercio, extensión del IVA, participación privada en infraestructura, flexibilización laboral, y privatización de empresas públicas.", txt:"¿Por qué estas medidas pueden catalogarse como 'neoliberales'?", opts:["Porque implican un manejo arbitrario de la dinámica económica por el gobierno nacional.","Porque plantean una mayor presencia del Estado en el sector productivo como agente administrador.","Porque implican la injerencia de instituciones financieras extranjeras en la política económica interna.","Porque plantean reducir el tamaño del Estado y su participación en la regulación de actividades económicas."], ans:3 },
+  { n:20, ctx:"Plan Nacional de Desarrollo de México: 'La productividad se puede impulsar desde los sectores privado y social mediante la eliminación de trabas que impiden el funcionamiento adecuado de la economía, promoviendo la creación de empleos, mejorando la regulación y simplificando la normatividad y trámites gubernamentales.'", txt:"¿Con cuál modelo es afín esta propuesta?", opts:["Con el socialismo, porque busca que el Estado tenga un control total de la economía.","Con la monarquía, porque centraliza las decisiones económicas en el jefe de Estado.","Con el neoliberalismo, porque restringe el rol del Estado a la protección del mercado.","Con la democracia, porque invita a todos a tomar parte en las decisiones económicas."], ans:2 },
+  { n:21, ctx:"Plan Nacional de Desarrollo Colombia años 1990: 'La eficiencia no puede ser antagónica con la equidad. Por tanto, en las determinaciones públicas primarán siempre consideraciones para que el juego del mercado no comprometa la equidad ni restrinja el acceso y la participación equitativa de los más pobres.'", txt:"¿Cuál enunciado explica la postura crítica de este fragmento frente al modelo neoliberal?", opts:["Se reconoce el papel central del Estado en la buena gestión y administración de los recursos públicos.","Se define el mercado como el principal mecanismo para distribuir eficientemente los beneficios del crecimiento económico.","Se afirma que, sin la intervención del Estado, no es posible garantizarle buenas condiciones de vida a toda la población.","Se señala implícitamente que la privatización de las empresas del Estado es un mecanismo eficiente para garantizar la equidad."], ans:2 },
+  { n:22, ctx:"El proteccionismo busca proteger a las empresas nacionales de la competencia extranjera mediante aranceles (impuestos a la entrada de productos extranjeros que aumentan su precio y dificultan su venta).", txt:"¿En cuál condición se justificaría el uso del modelo proteccionista?", opts:["Cuando se fabrica tecnología de punta para optimizar la producción de alimentos.","Cuando tiene suelos desérticos que impiden la producción de alimentos.","Cuando importa un buen número de alimentos que se producen en su territorio.","Cuando exporta más alimentos de los que compra en los mercados extranjeros."], ans:2 },
+  { n:23, ctx:"El Centro Nacional de Memoria Histórica define el desplazamiento forzado como un fenómeno masivo, sistemático, de larga duración y vinculado a las disputas entre actores armados por el control de territorios estratégicos.", txt:"¿Por qué el desplazamiento forzado permite comprender características propias del conflicto armado en Colombia?", opts:["Porque el desplazamiento forzado es un fenómeno social de larga duración que solo se presenta en Colombia.","Porque el desplazamiento forzado pone en evidencia, indirectamente, los intereses económicos de los actores en conflicto.","Porque el desplazamiento forzado permite determinar el efecto directo del conflicto armado sobre la población urbana.","Porque el desplazamiento forzado permite identificar zonas históricamente controladas por un único actor armado."], ans:1 },
+  { n:24, ctx:'"El actual conflicto armado afecta de manera directa o indirecta a toda la nación... La guerra que desató la subversión y que nos ha obligado a responder, no es una guerra de posiciones con distintivos convencionales. Es una guerra irregular, en la cual la guerrilla se camufla dentro de la población civil."', txt:"Probablemente, ¿quién elaboró este planteamiento?", opts:["Un empresario, porque señala las consecuencias indirectas del conflicto sobre la economía del país.","Un congresista, porque señala las consecuencias del conflicto armado y la necesidad de crear un marco jurídico para la paz.","Un investigador, porque se muestra externo al conflicto y califica la confrontación como de carácter irregular.","Un paramilitar, porque afirma que fueron las acciones de la guerrilla las que obligaron a su organización a involucrarse en el conflicto."], ans:3 },
+  { n:25, ctx:"Lista de problemas:\n1. Escasez de recursos naturales no renovables.\n2. Pertenencia a partidos políticos contrarios.\n3. Crecimiento demográfico de la población rural.\n4. Distribución desigual de la propiedad de la tierra.", txt:"¿Cuáles son causas del conflicto agrario en Colombia?", opts:["1 y 3.","1 y 4.","2 y 4.","1 y 2."], ans:2 },
+  { n:26, ctx:"", txt:"La acción de tutela busca la protección inmediata de los derechos fundamentales. ¿En cuál de las siguientes situaciones se puede presentar?", opts:["Cuando se vulnera el derecho a la salud, porque está en riesgo la vida de la persona.","Cuando alguien es expulsado de una agremiación, a pesar de estar al día en sus pagos.","Cuando se busca proteger un derecho colectivo de constituir juntas de acción comunal.","Cuando se legisla sobre el derecho a la vida y el acceso a un trabajo digno para las personas."], ans:0 },
+  { n:27, ctx:"En las principales ciudades del mundo moderno está produciéndose un paulatino abandono de las zonas residenciales del centro urbano, al tiempo que las zonas periféricas tienden a un mayor poblamiento por personas de ingresos medios y altos.", txt:"¿Cuál es probablemente la principal causa de este fenómeno?", opts:["El creciente desarrollo de la industria en el centro de las ciudades.","La búsqueda de mejor calidad de vida en barrios tranquilos.","La escasa oferta de servicios en los barrios del centro de la ciudad.","La creciente oferta de vivienda barata en las afueras de la ciudad."], ans:1 },
+  { n:28, ctx:"En Colombia, la discriminación de personas con orientación sexual diferente a la heterosexual ha llevado a procesos de movilización y acciones afirmativas de estas comunidades por la defensa de sus derechos.", txt:"¿Por qué estas movilizaciones son fundamentales en el desarrollo de la igualdad y del respeto por la diferencia?", opts:["Porque exigen al gobierno proyectos pedagógicos para la salud sexual.","Porque denuncian la explotación laboral y las condiciones de marginación espacial de estas personas.","Porque promulgan y reivindican los derechos y se denuncia la exclusión.","Porque sensibilizan a la gente sobre la importancia de reconocer la diversidad de creencias religiosas."], ans:2 },
+  { n:29, ctx:"La Revolución Industrial se debió a la invención de la máquina de vapor y la concentración del capital. Se pasó de la explotación de la tierra a la producción de bienes, del telar familiar a la gran fábrica y de la manufactura a la producción tecnificada.", txt:"¿Cuál de las siguientes afirmaciones es una consecuencia de la revolución industrial?", opts:["El traslado del campo a la ciudad y el surgimiento del proletariado urbano.","El crecimiento de la población rural sobre la urbana.","El nacimiento de una élite propietaria de la tierra.","El desarrollo de un modelo económico para la protección del proletariado."], ans:0 },
+  { n:30, ctx:"Se dice que una Constitución es la ley de leyes, la fuente de toda la jurisprudencia en un Estado de derecho. Cada una de las normas que se expidan debe ajustarse a los principios y mandatos constitucionales.", txt:"¿Cuál es la principal utilidad de una Constitución?", opts:["Impartir justicia y orientar las acciones del Poder Ejecutivo en un Estado social de derecho.","Facilitar la labor de los jueces, al asumir la tarea de impartir justicia, de manera imparcial y oportuna.","Garantizar la paz y la prosperidad de las naciones, al expresar los acuerdos y los compromisos de cada ciudadano.","Establecer un orden jurídico y un marco normativo que delimita el poder del Estado y establece qué es legal."], ans:3 },
+  { n:31, ctx:"Un estudio reveló que el 30% de las mujeres en Colombia son víctimas de violencia física. Un funcionario señaló que el estudio, aunque tenía datos confiables, no consideraba los distintos contextos y que algunos hechos violentos podrían estar justificados.", txt:"¿Cuál de los siguientes hechos podría ser un efecto de la posición del funcionario?", opts:["Que se cuestione la idoneidad de los investigadores que realizaron el estudio.","Que se generen estrategias más efectivas de prevención de la violencia contra las mujeres.","Que algunas personas no reconozcan la gravedad de los actos de violencia en contra de las mujeres.","Que las organizaciones feministas retiren sus peticiones."], ans:2 },
+  { n:32, ctx:"En una región de Colombia, una organización estatal promueve proyectos de agricultura para reintegrar campesinos desplazados utilizando terrenos de un humedal. Una organización ambientalista rechaza esta decisión porque afectará el ecosistema.", txt:"¿Son semejantes las posiciones de la organización estatal y la organización ambientalista?", opts:["Son semejantes, porque las dos buscan el aprovechamiento económico del humedal para el bienestar de los campesinos.","Son semejantes, porque las dos buscan defender a toda costa las riquezas naturales de la región.","Son diferentes, porque una defiende al ecosistema aunque esto signifique no poder dar tierras a los campesinos y la otra quiere ayudarlos, aunque se dañe el ecosistema.","Son diferentes, porque una busca que los campesinos se asienten en otra región y la otra busca que se preserve el ecosistema."], ans:2 },
+  { n:33, ctx:"La crisis de 1929 afectó a los países latinoamericanos al reducirse sus exportaciones e importaciones. Para contrarrestarla, los estados latinoamericanos adoptaron la sustitución de importaciones.", txt:"¿En qué consiste la sustitución de importaciones?", opts:["En prohibir el ingreso de toda clase de productos extranjeros.","En otorgar total libertad de producción, de cambio y de consumo.","En producir internamente los bienes que tradicionalmente se traían del exterior.","En dejar actuar libremente las leyes de la oferta y la demanda."], ans:2 },
+  { n:34, ctx:"Algunas tendencias del liberalismo promueven cobrar más impuestos a quienes poseen más recursos, y menos impuestos a quienes posean menos.", txt:"¿Cuál de las siguientes situaciones está de acuerdo con lo anterior?", opts:["En el país A, la tasa promedio de impuestos es el 33 % del salario de los habitantes.","En el país B, el gobierno autoriza aumentar el impuesto del IVA.","En el país C, el gobierno quita los subsidios para los servicios públicos.","En el país D, el gobierno aumenta los impuestos de patrimonio y renta."], ans:3 },
+  { n:35, ctx:"", txt:"El socialismo busca la igualdad social, política y económica. ¿Qué propone el socialismo para alcanzar este propósito?", opts:["Privatizar los medios de producción y lograr desmontar los sindicatos de las empresas transnacionales.","Impulsar el consumo y la capacidad de endeudamiento de los trabajadores como factores para dinamizar la economía.","Ofrecer bienes y servicios según el esquema de los tratados de libre comercio y la apertura económica.","Lograr la tenencia colectiva de los medios de producción y la consolidación del poder político en las clases trabajadoras."], ans:3 },
+  { n:36, ctx:"Un programa europeo apoyó a jóvenes bogotanos de estratos 1, 2 y 3 para crear negocios. Después de 5 años: 30% restaurantes, 30% salones de belleza, 20% tiendas de ropa, 10% librerías, 10% escuelas de baile. Deciden replicar el modelo con los mismos porcentajes en Riohacha, Leticia, Arauca y Florencia.", txt:"¿Por qué podría fallar la implementación de este modelo en las otras ciudades?", opts:["Porque los jóvenes no están interesados en hacer negocios sino en estudiar.","Porque no es viable mantener un programa por tan largo tiempo.","Porque las necesidades de la población, lo que se demanda, pueden ser muy distintas.","Porque los jóvenes no tienen buen dominio del inglés."], ans:2 },
+  { n:37, ctx:"El Consejo Académico de un colegio decidió nombrar como representantes al Consejo Estudiantil a los estudiantes con mejor desempeño académico y de convivencia, en lugar de realizar las elecciones ordinarias.", txt:"¿Qué situación genera esta decisión?", opts:["Que se estimule a los estudiantes a estudiar y ser mejores compañeros.","Que se dificulte la disponibilidad de tiempo para el desarrollo normal de las actividades académicas.","Que se vulnere el derecho de los estudiantes a tener y utilizar mecanismos de participación.","Que se promueva en los estudiantes la comprensión de la importancia del Consejo Estudiantil."], ans:2 },
+  { n:38, ctx:"El gobierno decidió construir una represa indispensable para generar electricidad en una zona con un asentamiento indígena. Después de un largo proceso de conciliación, se acordó la construcción y que los indígenas se asentaran en otro territorio.", txt:"Según la Constitución Política de Colombia, ¿cómo procedió el gobierno?", opts:["Actuó en contra de los derechos de las comunidades indígenas.","Favoreció a la comunidad indígena en contra del interés general.","Mostró respeto por la comunidad indígena en función del bien común.","Debió hacer una consulta popular para resolver este problema."], ans:2 },
+  { n:39, ctx:"Un profesor universitario sostiene que sus estudiantes mujeres se extienden demasiado en las respuestas. Por esa razón, cuando hombres y mujeres levantan la mano para responder, el profesor solo les da la palabra a los hombres.", txt:"De acuerdo con la Constitución, ¿el profesor está vulnerando algún derecho?", opts:["No, pues el profesor puede hacer esto porque tiene más experiencia que sus estudiantes.","Sí, ya que con su actuación el profesor está vulnerando el derecho a la igualdad.","No, pues a pesar de que la actitud del profesor puede ser chocante, no es discriminatoria.","Sí, porque el profesor puede justificar lo que hace si puede probar que las mujeres hablan demasiado."], ans:1 },
+  { n:40, ctx:"Una compañía petrolera identificó un yacimiento en una zona indígena. La comunidad se opone porque extraer el petróleo significa 'robarle la sangre a la madre tierra'. Después de un proceso de diálogo sin acuerdo, el Estado negó el permiso de explotación.", txt:"¿Cuál es la razón que mejor sustenta la decisión del Estado?", opts:["Garantizar el derecho a la igualdad.","Garantizar el derecho a la libre asociación.","Proteger la diversidad étnica y cultural.","Proteger el medio ambiente."], ans:2 },
+  { n:41, ctx:"En un periódico han aparecido titulares como: 'El alcalde no es capaz de solucionar el problema de criminalidad en la ciudad', 'Al alcalde le queda grande erradicar el crimen' y 'La ciudad y la Alcaldía están sometidas a los criminales'.", txt:"Antes de creer que el alcalde está haciendo mal su trabajo, ¿qué deberían revisar los ciudadanos principalmente?", opts:["El plan de gobierno para ver si había propuestas en el tema de seguridad.","Los índices de criminalidad en otras ciudades del país y de los países vecinos.","Los cambios en los índices de criminalidad desde que el alcalde se posesionó.","Las declaraciones oficiales del alcalde sobre si lo está haciendo bien o no."], ans:2 },
+  { n:42, ctx:"El problema del tráfico de drogas ilícitas ha generado debates. Algunos proponen que, para defender el bien común, se deben legalizar las drogas.", txt:"¿Cuál es el argumento más afín con la propuesta de legalización?", opts:["Cada persona debe tener la libertad de decidir si consume o no drogas y, por tanto, su comercialización no debería estar bajo ningún control.","Los países productores no tienen ninguna responsabilidad en el tráfico de drogas; la responsabilidad recae sobre los países consumidores.","Quienes consumen drogas no deben ser tratados como delincuentes, sino como adictos que necesitan tratamientos médicos.","En los países productores la prohibición ha generado problemas sociales más graves que aquellos que se querían evitar con esta medida."], ans:3 },
+  { n:43, ctx:"El jefe de policía de una ciudad declaró: 'Para evitar estas situaciones, lo mejor sería que las mujeres dejaran de salir con minifaldas o escotes provocadores a la calle. Así evitarían ser víctimas de acoso o violencia sexual.'", txt:"¿Qué intereses está favoreciendo esta declaración?", opts:["Los de las mujeres, porque está aconsejándoles cómo vestir para no ser víctimas.","Los de los policías, porque su función no es la de manejar casos de acoso.","Los de los agresores, porque está dándoles una justificación a lo que hacen.","Los de la ciudad, porque el acoso sexual afecta la percepción de seguridad."], ans:2 },
+  { n:44, ctx:"Ante crecientes robos en sectores de estratos altos, el alcalde considera autorizar el cerramiento de grandes sectores residenciales vigilados por seguridad privada, con acceso solo para residentes.", txt:"¿Qué intereses en conflicto deben ser tenidos en cuenta al evaluar la propuesta?", opts:["Los de las empresas de seguridad privada que buscan expandir su negocio, y los de las bandas de ladrones.","Los de los residentes que buscan su seguridad, y los de los demás habitantes de la ciudad que dejarían de tener acceso a vías y espacios públicos de los sectores encerrados.","Los de los residentes que buscan su beneficio particular y los intereses del gobierno local.","Los de las empresas de seguridad privada que serían contratadas, y los de la Policía encargada de la seguridad."], ans:1 },
+  { n:45, ctx:"La Corte Constitucional falló a favor de un soldado cuya religión le prohíbe el uso de armas y las prácticas militares. El fundamento del fallo es la defensa de la libertad de conciencia del soldado.", txt:"¿Cuál de las siguientes acciones es coherente con este fallo?", opts:["Ordenarle al Ejército la entrega de la libreta militar al soldado y su inmediata desvinculación de la institución.","Ordenarle al soldado cumplir su servicio militar obligatorio con todas las responsabilidades asignadas.","Ordenarle al Ejército que el soldado participe de los entrenamientos y haga solo tareas de oficina.","Ordenarle al soldado participar únicamente en paradas militares, portando con orgullo la dotación militar."], ans:0 },
+  { n:46, ctx:"Durante las épocas de lluvias, en muchas zonas rurales de Colombia se inundan escuelas y se interrumpen los caminos para llegar a estas.", txt:"¿Cuál solución podría evidenciar una vulneración al derecho a la educación?", opts:["Organizar esquemas de transporte para que los estudiantes vayan a clases en escuelas no afectadas por las inundaciones.","Ajustar el calendario escolar para que no haya clases en las épocas de inundación.","Dar una parte de las clases a través de la emisora de radio local, para reducir los días en los que tienen que asistir al colegio.","Asignar a los estudiantes a escuelas no inundadas y reiniciar las clases con los niños que puedan asistir."], ans:3 },
+  { n:47, ctx:"Pekín y otras partes de China sufren elevados niveles de contaminación. Las industrias pesadas (construcción y manufactura) aportaron el 46% del PIB en 2012. Los expertos señalan que China debe reducir su dependencia de estas industrias y apostar por un modelo de energía mixta.", txt:"¿Cuáles dimensiones están en conflicto?", opts:["La educativa y la ambiental.","La cultural y la educativa.","La económica y la ambiental.","La cultural y la económica."], ans:2 },
+  { n:48, ctx:"Un estudiante se intoxicó con comida que compró a un vendedor ambulante a la salida del colegio. El Consejo Directivo del colegio, con la ayuda de la Policía, logró la expulsión de los vendedores ambulantes del sector.", txt:"¿Cuál sería un efecto de la expulsión de los vendedores?", opts:["El aumento de la inseguridad en las inmediaciones del colegio.","El aumento de las intoxicaciones alimentarias de los estudiantes en el colegio.","La disminución del apoyo de la comunidad al Consejo Directivo y a la Policía.","La disminución de los ingresos de las familias que dependían de esas ventas."], ans:3 },
+];
+
+/* ─────────────────────────────────────────────────────
+   ESTADO DE LA APP
+───────────────────────────────────────────────────── */
+let cur      = 0;
+let answers  = new Array(QS.length).fill(null);
+let answered = new Array(QS.length).fill(false);
+let studentData = {};
+
+/* ─────────────────────────────────────────────────────
+   VALIDACIÓN Y ARRANQUE
+───────────────────────────────────────────────────── */
+function startQuiz() {
+  const inst  = document.getElementById('inp-inst').value.trim();
+  const name  = document.getElementById('inp-name').value.trim();
+  const grado = document.getElementById('inp-grado').value;
+  let ok = true;
+
+  // Validar institución
+  const fi = document.getElementById('f-inst');
+  if (!inst) { fi.classList.add('has-error'); document.getElementById('inp-inst').classList.add('invalid'); ok=false; }
+  else        { fi.classList.remove('has-error'); document.getElementById('inp-inst').classList.remove('invalid'); }
+
+  // Validar nombre
+  const fn = document.getElementById('f-name');
+  if (!name) { fn.classList.add('has-error'); document.getElementById('inp-name').classList.add('invalid'); ok=false; }
+  else        { fn.classList.remove('has-error'); document.getElementById('inp-name').classList.remove('invalid'); }
+
+  if (!ok) return;
+
+  studentData = {
+    institucion: inst,
+    nombre:      name,
+    grado:       grado || 'No indicado',
+    fechaInicio: new Date().toLocaleString('es-CO', { timeZone:'America/Bogota' })
+  };
+
+  showScreen('screen-question');
+  renderQ();
+}
+
+/* ─────────────────────────────────────────────────────
+   NAVEGACIÓN
+───────────────────────────────────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function updateProg() {
+  const pct = ((cur + 1) / QS.length) * 100;
+  document.getElementById('prog-bar').style.width = pct + '%';
+}
+
+function updateLive() {
+  const c = answers.filter((a,i)=> a!==null && a===QS[i].ans).length;
+  const t = answers.filter(a=> a!==null).length;
+  document.getElementById('score-live').textContent =
+    t > 0 ? `✓ ${c} correctas de ${t} respondidas` : '';
+}
+
+/* ─────────────────────────────────────────────────────
+   RENDERIZAR PREGUNTA
+───────────────────────────────────────────────────── */
+function renderQ() {
+  const q = QS[cur];
+  const L = ['A','B','C','D'];
+
+  document.getElementById('q-num-lbl').textContent = `Pregunta ${q.n}`;
+  document.getElementById('q-counter').textContent = `${cur+1} / ${QS.length}`;
+
+  const ctxEl = document.getElementById('q-context');
+  if (q.ctx && q.ctx.trim()) { ctxEl.style.display='block'; ctxEl.textContent=q.ctx; }
+  else                         { ctxEl.style.display='none'; }
+
+  document.getElementById('q-text').textContent = q.txt;
+
+  const optsEl = document.getElementById('q-options');
+  optsEl.innerHTML = '';
+
+  q.opts.forEach((opt,i)=>{
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.dataset.idx = i;
+    if (answered[cur]) {
+      div.classList.add('disabled');
+      if (i === q.ans) div.classList.add('correct');
+      else if (i === answers[cur] && answers[cur] !== q.ans) div.classList.add('incorrect');
+    } else {
+      div.addEventListener('click', ()=> selectAns(i));
+    }
+    div.innerHTML = `<span class="opt-letter">${L[i]}</span><span>${opt}</span>`;
+    if (answered[cur]) {
+      if (i === q.ans) div.innerHTML += '<span style="margin-left:auto;font-size:1rem">✅</span>';
+      else if (i === answers[cur] && answers[cur] !== q.ans) div.innerHTML += '<span style="margin-left:auto;font-size:1rem">❌</span>';
+    }
+    optsEl.appendChild(div);
+  });
+
+  const fb = document.getElementById('feedback-box');
+  if (answered[cur]) {
+    fb.style.display='block';
+    const ok = answers[cur] === q.ans;
+    fb.className = 'feedback-box ' + (ok ? 'ok' : 'err');
+    fb.innerHTML = ok
+      ? '<strong>✅ ¡Correcto!</strong> Seleccionaste la opción acertada.'
+      : `<strong>❌ Incorrecto.</strong> La respuesta correcta es la opción <strong>${L[q.ans]}</strong>.`;
+  } else {
+    fb.style.display='none';
+  }
+
+  document.getElementById('btn-prev').style.visibility = cur===0 ? 'hidden' : 'visible';
+  const btnNext = document.getElementById('btn-next');
+  if (cur === QS.length-1) {
+    btnNext.textContent = 'Ver resultado →';
+    btnNext.onclick = showResult;
+  } else {
+    btnNext.textContent = 'Siguiente →';
+    btnNext.onclick = nextQ;
+  }
+
+  updateProg();
+  updateLive();
+}
+
+function selectAns(idx) {
+  if (answered[cur]) return;
+  answers[cur] = idx;
+  answered[cur] = true;
+  renderQ();
+}
+function nextQ() { if (cur < QS.length-1) { cur++; renderQ(); } }
+function prevQ() { if (cur > 0)           { cur--; renderQ(); } }
+
+/* ─────────────────────────────────────────────────────
+   MOSTRAR RESULTADO
+───────────────────────────────────────────────────── */
+function showResult() {
+  let correct=0, wrong=0, skip=0;
+  QS.forEach((q,i)=>{
+    if      (answers[i]===null)      skip++;
+    else if (answers[i]===q.ans)     correct++;
+    else                              wrong++;
+  });
+
+  const puntaje = calcSaber11(correct, QS.length);
+  const pct     = Math.round((correct/QS.length)*100);
+  const fecha   = new Date().toLocaleString('es-CO', { timeZone:'America/Bogota' });
+
+  // Cabecera de identificación
+  document.getElementById('res-name').textContent = studentData.nombre;
+  document.getElementById('res-inst').textContent =
+    studentData.institucion + ' · ' + studentData.grado;
+  document.getElementById('res-date').textContent = fecha;
+
+  // Puntaje
+  document.getElementById('final-score').textContent = puntaje.toFixed(2);
+  document.getElementById('r-correct').textContent = correct;
+  document.getElementById('r-wrong').textContent   = wrong;
+  document.getElementById('r-pct').textContent     = pct + '%';
+
+  // Animación barra
+  setTimeout(()=>{
+    document.getElementById('score-bar').style.width = puntaje + '%';
+  }, 200);
+
+  // Nivel de desempeño (basado en escala ICFES)
+  const nivel = getNivel(puntaje);
+  const nc = document.getElementById('nivel-card');
+  nc.style.background = nivel.bg;
+  nc.style.color       = nivel.color;
+  nc.style.border      = '2px solid ' + nivel.border;
+  document.getElementById('nivel-icon').textContent  = nivel.icon;
+  document.getElementById('nivel-label').textContent = nivel.label;
+  document.getElementById('nivel-msg').textContent   = nivel.msg;
+
+  showScreen('screen-result');
+  document.getElementById('prog-bar').style.width = '100%';
+
+  // Enviar a Google Sheets
+  sendToSheets({ ...studentData, fecha, correctas: correct, incorrectas: wrong, sinResponder: skip, puntaje });
+}
+
+function getNivel(p) {
+  if (p >= 80) return { icon:'🏆', label:'Nivel Superior', msg:'Dominio sólido de las competencias evaluadas. Muy bien preparado para el Saber 11.', bg:'#E8F5E9', color:'#1B5E20', border:'#A5D6A7' };
+  if (p >= 65) return { icon:'⭐', label:'Nivel Alto',     msg:'Buen desempeño. Refuerza los temas en los que fallaste y estarás listo.', bg:'#E3F2FD', color:'#0D47A1', border:'#90CAF9' };
+  if (p >= 50) return { icon:'📘', label:'Nivel Medio',    msg:'Desempeño básico. Trabaja en los conceptos clave de historia, economía y ciudadanía.', bg:'#FFF8E1', color:'#E65100', border:'#FFE082' };
+  if (p >= 35) return { icon:'📖', label:'Nivel Básico',   msg:'Necesitas reforzar varios temas. Practica con mayor frecuencia este simulacro.', bg:'#FFF3E0', color:'#BF360C', border:'#FFCC80' };
+  return              { icon:'💪', label:'En desarrollo',  msg:'Aún hay mucho por aprender. No te desanimes: practica y mejorarás.', bg:'#FFEBEE', color:'#B71C1C', border:'#EF9A9A' };
+}
+
+/* ─────────────────────────────────────────────────────
+   ENVÍO A GOOGLE SHEETS
+───────────────────────────────────────────────────── */
+async function sendToSheets(data) {
+  const st = document.getElementById('send-status');
+
+  if (!SHEETS_URL || SHEETS_URL === 'PEGA_AQUI_TU_URL_DE_APPS_SCRIPT') {
+    st.className = 'send-status fail';
+    st.textContent = '⚠️ Aún no se ha configurado la URL de Google Sheets. Consulta las instrucciones del docente.';
+    return;
+  }
+
+  st.className = 'send-status sending';
+  st.textContent = '⏳ Registrando tu resultado...';
+
+  try {
+    await fetch(SHEETS_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(data)
+    });
+    st.className = 'send-status sent';
+    st.textContent = '✅ Tu resultado fue registrado exitosamente en la base de datos del docente.';
+  } catch(e) {
+    st.className = 'send-status fail';
+    st.textContent = '❌ No se pudo registrar el resultado. Verifica tu conexión a internet.';
+  }
+}
+
+/* ─────────────────────────────────────────────────────
+   REVISIÓN Y REINICIO
+───────────────────────────────────────────────────── */
+let reviewVisible = false;
+function toggleReview() {
+  const rev = document.getElementById('review-section');
+  reviewVisible = !reviewVisible;
+  if (!reviewVisible) { rev.style.display='none'; return; }
+  rev.style.display='block';
+  const L = ['A','B','C','D'];
+  let html = '<h3 style="font-family:\'Playfair Display\',serif;margin-bottom:16px;font-size:1.1rem;">Revisión pregunta a pregunta</h3>';
+  QS.forEach((q,i)=>{
+    const ok = answers[i]===q.ans;
+    const ua = answers[i];
+    html += `<div class="review-item ${ok?'ok-r':'err-r'}">
+      <span class="review-badge ${ok?'ok-b':'err-b'}">${ok?'✅ CORRECTA':'❌ INCORRECTA'}</span>
+      <p style="font-size:.82rem;color:#666;margin-bottom:4px;">Pregunta ${q.n}</p>
+      <p style="font-size:.9rem;line-height:1.5;color:#333;">${q.txt.substring(0,110)}${q.txt.length>110?'…':''}</p>
+      <p style="margin-top:8px;font-size:.82rem;color:#555;">
+        Tu respuesta: <strong>${ua!==null?L[ua]:'Sin responder'}</strong>
+        ${!ok?` · Correcta: <strong style="color:var(--ok)">${L[q.ans]}</strong>`:''}
+      </p>
+    </div>`;
+  });
+  rev.innerHTML = html;
+}
+
+function restartQuiz() {
+  cur      = 0;
+  answers  = new Array(QS.length).fill(null);
+  answered = new Array(QS.length).fill(false);
+  studentData = {};
+  reviewVisible = false;
+  document.getElementById('prog-bar').style.width='0%';
+  document.getElementById('score-bar').style.width='0%';
+  document.getElementById('send-status').className='send-status';
+  document.getElementById('review-section').style.display='none';
+  // Limpiar formulario
+  document.getElementById('inp-inst').value='';
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-grado').value='';
+  showScreen('screen-reg');
+}
+</script>
+</body>
+</html>
